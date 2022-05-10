@@ -1,11 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { api } from '../../services/api';
 import { Container } from './styles';
 
+interface TransactionTableProps{
+    id: number;
+    title: string;
+    amount: number;
+    type: string;
+    category: string
+    createdAt: string;
+}
+
 export const TransactionTable: React.FC = () => {
+  const [transactions, setTransactions] = useState<TransactionTableProps[]>([]);
+
   useEffect(() => {
       api.get('transactions')
-      .then(res => console.log(res.data))
+      .then(res => setTransactions(res.data.transactions))
   }, [])
 
   return (
@@ -20,18 +31,19 @@ export const TransactionTable: React.FC = () => {
                 </tr>
             </thead>    
             <tbody>
-                    <tr>
-                        <td>Desenvolvimento de website</td>
-                        <td className="deposit">R$12.000</td>
-                        <td>Desenvolvimento</td>
-                        <td>20/02/2021</td>
+                { transactions.map((i) => {
+                    return(
+                    <tr key={i.id}>
+                        <td>{i.title}</td>
+                        <td className={i.type}>{new Intl.NumberFormat('pt-BR',{
+                            style: 'currency',
+                            currency: 'BRL',
+                        }).format(i.amount)}</td>
+                        <td>{i.category}</td>
+                        <td>{new Intl.DateTimeFormat('pt-BR').format(new Date(i.createdAt))}</td>
                     </tr>
-                    <tr>
-                        <td>Aluguel</td>
-                        <td className="withdraw">- R$1.100</td>
-                        <td>Casa</td>
-                        <td>17/02/2021</td>
-                    </tr>
+                    )
+                })}
             </tbody>
             
         </table>

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useCallback, useState } from 'react';
 import closeImg from '../../assets/x.svg';
 import incomeImg from '../../assets/entradas.svg';
 import outcomImg from '../../assets/saidas.svg';
 import Modal from 'react-modal';
 import { Container, Radiobox, TransactionTypeContainer } from './styles';
+import { api } from '../../services/api';
 
 interface PropsModalNewTransaction {
     isOpen:boolean;
@@ -13,6 +14,23 @@ interface PropsModalNewTransaction {
 
 const NewTransactionModal: React.FC<PropsModalNewTransaction> = ({ isOpen, onRequestClose }) => {
   const [type, setType] = useState('deposit');
+  const [title, setTitle] = useState('');
+  const [value, setValue] = useState(0);
+  const [category, setCategory] = useState('');
+
+  const handleCreateNewTransaction = useCallback((event:  FormEvent) => {
+     event.preventDefault();
+
+     const data = {
+        title,
+        value,
+        category,
+        type
+     }
+     
+     api.post('/transactions', data)
+     
+  }, [category, title, type, value])
 
     
   return <Modal isOpen={isOpen} 
@@ -27,15 +45,19 @@ const NewTransactionModal: React.FC<PropsModalNewTransaction> = ({ isOpen, onReq
                 >
                     <img src={closeImg} alt="close"/>
                 </button>
-            <Container>
+            <Container onSubmit={handleCreateNewTransaction}>
                 <h2>Cadastrar Transação</h2>
                 <input 
                     placeholder="Titulo" 
+                    value={title}
+                    onChange={event=> setTitle(event.target.value)}
                 />
                 
                 <input 
                     type="number"  
                     placeholder="Valor" 
+                    value={value}
+                    onChange={event=> setValue(Number(event.target.value))}
                 />
 
                 <TransactionTypeContainer>
@@ -61,6 +83,8 @@ const NewTransactionModal: React.FC<PropsModalNewTransaction> = ({ isOpen, onReq
 
                 <input 
                     placeholder="Categoria"
+                    value={category}
+                    onChange={event=> setCategory(event.target.value)}
                 />
 
                 <button type="submit">
