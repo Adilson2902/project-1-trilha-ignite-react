@@ -1,12 +1,12 @@
-import React, { useContext } from 'react';
-import { TransactionContext } from '../../TransactionContext';
+import React from 'react';
+import {  useTransactions } from '../hooks/useTransactions';
 import { Container } from './styles';
 
 import FormatNumber from '../helper/number';
 import FormatData from '../helper/data';
  
 export const TransactionTable: React.FC = () => {
-  const { transactions } = useContext(TransactionContext);
+  const { transactions } = useTransactions();
 
   return (
     <Container>

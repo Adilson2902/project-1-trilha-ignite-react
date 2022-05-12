@@ -2,13 +2,12 @@ import { Container } from "./styles";
 import incomeImg from '../../assets/entradas.svg';
 import outcomImg from '../../assets/saidas.svg';
 import totalcomImg from '../../assets/total.svg';
-import { useContext } from "react";
-import { TransactionContext } from "../../TransactionContext";
+import {  useTransactions } from "../hooks/useTransactions";
 
 import FormatNumber from '../helper/number';
 
 export const Summary: React.FC = () => {
-    const { transactions } = useContext(TransactionContext);
+    const { transactions } = useTransactions();
     
     const summary = transactions.reduce((a, b) => {
         if(b.type === 'deposit'){
