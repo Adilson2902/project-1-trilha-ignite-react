@@ -14,7 +14,7 @@ type Transaction = Omit<TransactionTableProps, 'id' | 'createdAt'>;
 
 interface TransactionContextProps {
     transactions: TransactionTableProps[];
-    createTransaction: (transaction: Transaction) => void;
+    createTransaction: (transaction: Transaction) => Promise<void>;
 }
 
 interface TransactionProviderProps{
@@ -31,9 +31,15 @@ export const TransactionProvider: React.FC<TransactionProviderProps> = ({ childr
         .then(res => setTransactions(res.data.transactions))
     }, [])
 
-    const createTransaction = useCallback((transaction: Transaction) => {
-        api.post('/transactions',transaction);
-    }, [])
+    const createTransaction = useCallback(async (transactionInput: Transaction) => {
+        const resp = await api.post('/transactions',{
+            ...transactionInput,
+            createdAt: new Date()});
+
+        const { transaction } = resp.data;
+
+        setTransactions([...transactions, transaction]);
+    }, [transactions])
 
     return (
         <TransactionContext.Provider value={{transactions,createTransaction}}>

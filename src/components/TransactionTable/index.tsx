@@ -2,6 +2,9 @@ import React, { useContext } from 'react';
 import { TransactionContext } from '../../TransactionContext';
 import { Container } from './styles';
 
+import FormatNumber from '../helper/number';
+import FormatData from '../helper/data';
+ 
 export const TransactionTable: React.FC = () => {
   const { transactions } = useContext(TransactionContext);
 
@@ -21,12 +24,9 @@ export const TransactionTable: React.FC = () => {
                     return(
                     <tr key={i.id}>
                         <td>{i.title}</td>
-                        <td className={i.type}>{new Intl.NumberFormat('pt-BR',{
-                            style: 'currency',
-                            currency: 'BRL',
-                        }).format(i.amount)}</td>
+                        <td className={i.type}>{FormatNumber(i.amount)}</td>
                         <td>{i.category}</td>
-                        <td>{new Intl.DateTimeFormat('pt-BR').format(new Date(i.createdAt))}</td>
+                        <td>{FormatData(new Date(i.createdAt))}</td>
                     </tr>
                     )
                 })}

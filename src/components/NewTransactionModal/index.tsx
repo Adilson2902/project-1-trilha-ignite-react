@@ -20,7 +20,7 @@ const NewTransactionModal: React.FC<PropsModalNewTransaction> = ({ isOpen, onReq
   const [amount, setAmount] = useState(0);
   const [category, setCategory] = useState('');
 
-  const handleCreateNewTransaction = useCallback((event:  FormEvent) => {
+  const handleCreateNewTransaction = useCallback(async (event:  FormEvent) => {
      event.preventDefault();
 
      const data = {
@@ -30,9 +30,16 @@ const NewTransactionModal: React.FC<PropsModalNewTransaction> = ({ isOpen, onReq
         type
      }
      
-     createTransaction(data);
+    await createTransaction(data);
+
+    setTitle('');
+    setAmount(0);
+    setType('deposit');
+    setCategory('');
+
+    onRequestClose();
      
-  }, [amount, category, createTransaction, title, type])
+  }, [amount, category, createTransaction, onRequestClose, title, type])
 
     
   return <Modal isOpen={isOpen} 
