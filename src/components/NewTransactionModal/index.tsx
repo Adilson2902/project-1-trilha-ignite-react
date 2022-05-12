@@ -1,10 +1,10 @@
-import React, { FormEvent, useCallback, useState } from 'react';
+import React, { FormEvent, useCallback, useState, useContext } from 'react';
 import closeImg from '../../assets/x.svg';
 import incomeImg from '../../assets/entradas.svg';
 import outcomImg from '../../assets/saidas.svg';
 import Modal from 'react-modal';
 import { Container, Radiobox, TransactionTypeContainer } from './styles';
-import { api } from '../../services/api';
+import { TransactionContext } from '../../TransactionContext';
 
 interface PropsModalNewTransaction {
     isOpen:boolean;
@@ -13,9 +13,11 @@ interface PropsModalNewTransaction {
 
 
 const NewTransactionModal: React.FC<PropsModalNewTransaction> = ({ isOpen, onRequestClose }) => {
+  const { createTransaction } = useContext(TransactionContext);
+
   const [type, setType] = useState('deposit');
   const [title, setTitle] = useState('');
-  const [value, setValue] = useState(0);
+  const [amount, setAmount] = useState(0);
   const [category, setCategory] = useState('');
 
   const handleCreateNewTransaction = useCallback((event:  FormEvent) => {
@@ -23,14 +25,14 @@ const NewTransactionModal: React.FC<PropsModalNewTransaction> = ({ isOpen, onReq
 
      const data = {
         title,
-        value,
+        amount,
         category,
         type
      }
      
-     api.post('/transactions', data)
+     createTransaction(data);
      
-  }, [category, title, type, value])
+  }, [amount, category, createTransaction, title, type])
 
     
   return <Modal isOpen={isOpen} 
@@ -56,8 +58,8 @@ const NewTransactionModal: React.FC<PropsModalNewTransaction> = ({ isOpen, onReq
                 <input 
                     type="number"  
                     placeholder="Valor" 
-                    value={value}
-                    onChange={event=> setValue(Number(event.target.value))}
+                    value={amount}
+                    onChange={event=> setAmount(Number(event.target.value))}
                 />
 
                 <TransactionTypeContainer>
